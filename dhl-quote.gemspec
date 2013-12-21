@@ -7,5 +7,6 @@ Gem::Specification.new do |s|
   s.authors     = ["startingpoint"]
   s.email       = "startingpoint"
   s.files       = Dir["lib/**/*"]
+  s.add_runtime_dependency 'nokogiri'
   s.license     = 'MIT'
 end
