@@ -10,7 +10,8 @@ module Shipping
         @shipping_charge = parsed_response.xpath("//ShippingCharge").text
 
         if @shipping_charge.empty?
-          raise CannotFetchShippingRate
+          error_message = parsed_response.xpath("//ConditionData").text
+          raise CannotFetchShippingRate, error_message
         end
       end
     end
