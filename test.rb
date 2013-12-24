@@ -12,4 +12,4 @@ package = Shipping::Package.new({piece_id: 1, height: 2, depth: 2, width: 2, wei
 from = Shipping::Address.new({country_code: 'BA', zip_code: '71000', city: 'Sarajevo'})
 to = Shipping::Address.new({country_code: 'BA', zip_code: '71000', city: 'Sarajevo'})
 
-puts dhl.shipping_rates(package, from, to).shipping_charge
+puts dhl.shipping_rates(from, to, 0.2, [package]).shipping_charge

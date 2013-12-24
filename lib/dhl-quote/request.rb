@@ -14,8 +14,8 @@ module Shipping
         yield(configuration)
       end
 
-      def shipping_rates(from, to, packages)
-        post_body = build_rate_request(from, to, packages)
+      def shipping_rates(from, to, shipment_weight=nil, packages=[])
+        post_body = build_rate_request(from, to, shipment_weight, packages)
         uri = URI.parse(Request.configuration.uri)
 
         http = Net::HTTP.new(uri.host, uri.port)
@@ -49,12 +49,12 @@ module Shipping
         end.strftime("%Y-%m-%d")
       end
 
-      def build_rate_request(from, to, packages)
+      def build_rate_request(from, to, shipment_weight, packages)
         root = XmlNode.new('p:DCTRequest', 'xmlns:p' => 'http://www.dhl.com', 'xmlns:p1' => 'http://www.dhl.com/datatypes', 'xmlns:p2' => 'http://www.dhl.com/DCTRequestdatatypes', 'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance', 'xsi:schemaLocation' => 'http://www.dhl.com DCT-req.xsd') do |xml|
           xml << XmlNode.new('GetQuote') do |quote|
             quote << generate_request_header
             quote << generate_from(from)
-            quote << generate_shipment(packages)
+            quote << generate_shipment(shipment_weight, packages)
             quote << generate_to(to)
           end
         end      
@@ -91,7 +91,7 @@ module Shipping
       end
 
       # generate shipment details, packages info
-      def generate_shipment(packages)
+      def generate_shipment(shipment_weight, packages)
         XmlNode.new('BkgDetails') do |details|
           details << XmlNode.new('PaymentCountryCode', 'US')
           details << XmlNode.new('Date', ready_date)
@@ -99,15 +99,18 @@ module Shipping
           details << XmlNode.new('ReadyTimeGMTOffset', '+00:00')
           details << XmlNode.new('DimensionUnit', 'CM')
           details << XmlNode.new('WeightUnit', 'KG')
+          details << XmlNode.new('ShipmentWeight', shipment_weight)
 
-          details << XmlNode.new('Pieces') do |pieces|
-            packages.each do |package|
-              pieces << XmlNode.new('Piece') do |piece|
-                piece << XmlNode.new('PieceID', package.piece_id)
-                piece << XmlNode.new('Height', package.height)
-                piece << XmlNode.new('Depth', package.depth)
-                piece << XmlNode.new('Width', package.width)
-                piece << XmlNode.new('Weight', package.weight)
+          unless packages.empty?
+            details << XmlNode.new('Pieces') do |pieces|
+              packages.each do |package|
+                pieces << XmlNode.new('Piece') do |piece|
+                  piece << XmlNode.new('PieceID', package.piece_id)
+                  piece << XmlNode.new('Height', package.height)
+                  piece << XmlNode.new('Depth', package.depth)
+                  piece << XmlNode.new('Width', package.width)
+                  piece << XmlNode.new('Weight', package.weight)
+                end
               end
             end
           end
