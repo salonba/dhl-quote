@@ -2,7 +2,7 @@ module Shipping
   module DHL
     class Request
       class Configuration
-        attr_accessor :uri, :site_id, :password
+        attr_accessor :uri, :site_id, :password, :packaging_weight
       end
 
       class << self
