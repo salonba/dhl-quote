@@ -106,9 +106,9 @@ module Shipping
               packages.each do |package|
                 pieces << XmlNode.new('Piece') do |piece|
                   piece << XmlNode.new('PieceID', package.piece_id)
-                  piece << XmlNode.new('Height', package.height)
-                  piece << XmlNode.new('Depth', package.depth)
-                  piece << XmlNode.new('Width', package.width)
+                  piece << XmlNode.new('Height', package.height) if package.height
+                  piece << XmlNode.new('Depth', package.depth) if package.depth
+                  piece << XmlNode.new('Width', package.width) if package.width
                   piece << XmlNode.new('Weight', package.weight)
                 end
               end
