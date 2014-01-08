@@ -2,7 +2,8 @@ module Shipping
   module DHL
     class Request
       class Configuration
-        attr_accessor :uri, :site_id, :password, :packaging_weight
+        attr_accessor :uri, :site_id, :password, :packaging_weight, 
+          :payment_country_code, :payment_account_number
       end
 
       class << self
@@ -93,7 +94,8 @@ module Shipping
       # generate shipment details, packages info
       def generate_shipment(shipment_weight, packages)
         XmlNode.new('BkgDetails') do |details|
-          details << XmlNode.new('PaymentCountryCode', 'US')
+          details << XmlNode.new('PaymentCountryCode', Request.configuration.payment_country_code)
+          details << XmlNode.new('PaymentAccountNumber', Request.configuration.payment_account_number)
           details << XmlNode.new('Date', ready_date)
           details << XmlNode.new('ReadyTime', ready_time)
           details << XmlNode.new('ReadyTimeGMTOffset', '+00:00')
