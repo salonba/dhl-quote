@@ -95,10 +95,9 @@ module Shipping
       def generate_shipment(shipment_weight, packages)
         XmlNode.new('BkgDetails') do |details|
           details << XmlNode.new('PaymentCountryCode', Request.configuration.payment_country_code)
-          details << XmlNode.new('PaymentAccountNumber', Request.configuration.payment_account_number)
           details << XmlNode.new('Date', ready_date)
           details << XmlNode.new('ReadyTime', ready_time)
-          details << XmlNode.new('ReadyTimeGMTOffset', '+00:00')
+          details << XmlNode.new('ReadyTimeGMTOffset', '+01:00')
           details << XmlNode.new('DimensionUnit', 'CM')
           details << XmlNode.new('WeightUnit', 'KG')
           details << XmlNode.new('ShipmentWeight', shipment_weight)
@@ -116,6 +115,8 @@ module Shipping
               end
             end
           end
+
+          details << XmlNode.new('PaymentAccountNumber', Request.configuration.payment_account_number)
         end
       end
     end
